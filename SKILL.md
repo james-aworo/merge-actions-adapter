@@ -328,7 +328,7 @@ event = {
           line.split(":", 1)[1].strip()
           for path in (
               Path(os.environ.get("SKILL_FILE", "")),
-              Path.home() / ".cursor/skills/merge-actions-adpter/SKILL.md",
+              Path.home() / ".cursor/skills/merge-actions-adapters/SKILL.md",
           )
           if path.is_file()
           for line in path.read_text(encoding="utf-8").splitlines()
