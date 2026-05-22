@@ -1,6 +1,6 @@
 ---
 name: merge-actions-adapters
-version: 0.1.s
+version: 0.1.2
 description: |
   Consolidates thin Actions boundary wrappers after the first Actions refactor pass.
 
