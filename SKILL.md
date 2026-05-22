@@ -1,6 +1,6 @@
 ---
-name: merge-actions-adpter
-version: 0.1.1
+name: merge-actions-adapters
+version: 0.1.s
 description: |
   Consolidates thin Actions boundary wrappers after the first Actions refactor pass.
 
@@ -34,7 +34,7 @@ allowed-tools:
   - Jetbrains
 ---
 
-# actions-adapter-consolidation
+# merge-actions-adapters
 
 ## 0. Role
 
@@ -58,7 +58,7 @@ Consolidate only selected wrapper type and selected scope.
 Preserve behavior.
 Use one wrapper per foreign domain.
 Delete only when the user explicitly selects a delete-capable mode.
-Record uncertainty in actions-adapter-consolidation-review.jsonl.
+Record uncertainty in review.jsonl.
 ```
 
 Definitions:
@@ -297,12 +297,12 @@ REPO_ROOT="$(pwd -P)"
 BRANCH="$(git branch --show-current 2>/dev/null || echo detached)"
 HEAD_SHA="$(git rev-parse HEAD 2>/dev/null || echo unknown)"
 
-STATE_DIR=".cursor/plans/actions-adapter-consolidation/state"
+STATE_DIR=".cursor/plans/merge-actions-adapters/state"
 AUDIT_DIR="$STATE_DIR/audits"
 PATCH_DIR="$STATE_DIR/patches"
 TMP_DIR="$STATE_DIR/tmp"
 LOG_FILE="$STATE_DIR/runs.jsonl"
-REVIEW_FILE="$STATE_DIR/actions-adapter-consolidation-review.jsonl"
+REVIEW_FILE="$STATE_DIR/review.jsonl"
 
 mkdir -p "$AUDIT_DIR" "$PATCH_DIR" "$TMP_DIR"
 touch "$LOG_FILE"
@@ -322,7 +322,7 @@ from datetime import datetime, timezone
 event = {
   "ts": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
   "event": "started",
-  "skill": "actions-adapter-consolidation",
+  "skill": "merge-actions-adapters",
   "version": next(
       (
           line.split(":", 1)[1].strip()
@@ -362,7 +362,7 @@ If bootstrap prints `BLOCKED`, stop and report the blocker.
 Expected ignored state path:
 
 ```text
-.cursor/plans/actions-adapter-consolidation/state
+.cursor/plans/merge-actions-adapters/state
 ```
 
 If this path is not ignored, warn in the final response.
@@ -713,7 +713,7 @@ If deletion is skipped, append a cleanup review task.
 Before editing, write audit JSON to:
 
 ```text
-.cursor/plans/actions-adapter-consolidation/state/audits/<RUN_ID>.audit.json
+.cursor/plans/merge-actions-adapters/state/audits/<RUN_ID>.audit.json
 ```
 
 Shape:
@@ -735,7 +735,7 @@ Shape:
     "dirty": false
   },
   "skill": {
-    "name": "actions-adapter-consolidation",
+    "name": "merge-actions-adapters",
     "version": "<skill version from SKILL.md frontmatter>"
   },
   "scope": {
@@ -886,7 +886,7 @@ Use machine-readable JSONL for follow-up tasks.
 File:
 
 ```text
-actions-adapter-consolidation-review.jsonl
+review.jsonl
 ```
 
 Each line must be one valid JSON object.
@@ -912,7 +912,7 @@ Review task shape:
   "recommendedFollowUp": "string",
   "acceptanceCriteria": ["string"],
   "reviewOwners": ["string"],
-  "createdBySkill": "actions-adapter-consolidation",
+  "createdBySkill": "merge-actions-adapters",
   "createdAt": "ISO-8601"
 }
 ```
@@ -1029,7 +1029,7 @@ Suspicious does not mean forbidden. It means inspect and confirm it is not new l
 Write patch report to:
 
 ```text
-.cursor/plans/actions-adapter-consolidation/state/patches/<RUN_ID>.patch.json
+.cursor/plans/merge-actions-adapters/state/patches/<RUN_ID>.patch.json
 ```
 
 Shape:
@@ -1039,7 +1039,7 @@ Shape:
   "runId": "string",
   "timestamp": "ISO-8601",
   "auditPath": "string",
-  "reviewFile": "actions-adapter-consolidation-review.jsonl",
+  "reviewFile": "review.jsonl",
   "patch": {
     "branch": "string",
     "mode": "audit_only | apply | apply_allow_delete",
@@ -1101,7 +1101,7 @@ Old wrappers left in place: <count>
 Checks: <passed/skipped/failed with command names>
 Audit saved: <path>
 Patch report: <path>
-Review tasks: <count written to actions-adapter-consolidation-review.jsonl>
+Review tasks: <count written to review.jsonl>
 ```
 
 ### 21.3 Applied With Delete
@@ -1119,7 +1119,7 @@ Old wrappers left in place: <count and reason>
 Checks: <passed/skipped/failed with command names>
 Audit saved: <path>
 Patch report: <path>
-Review tasks: <count written to actions-adapter-consolidation-review.jsonl>
+Review tasks: <count written to review.jsonl>
 ```
 
 ---
@@ -1160,7 +1160,7 @@ Expected behavior:
 - ActionService injects TargetActionAdapter
 - ActionService call sites use TargetActionAdapter
 - source wrappers are left in place because mode is apply
-- cleanup candidates are written to actions-adapter-consolidation-review.jsonl
+- cleanup candidates are written to review.jsonl
 ```
 
 ### 22.2 Consolidate and delete obsolete adapters
@@ -1240,7 +1240,7 @@ Reason:
 actions-refactor:
   moves one controller flow into domains/actions and creates safe thin wrappers.
 
-actions-adapter-consolidation:
+merge-actions-adapters:
   cleans up wrapper shape after relocation by merging wrappers by foreign domain.
 ```
 
